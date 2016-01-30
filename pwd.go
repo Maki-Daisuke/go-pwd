@@ -30,5 +30,6 @@ func Getpwnam(name string) *Passwd {
 		UID:   uint32(cpw.pw_uid),
 		GID:   uint32(cpw.pw_uid),
 		Dir:   C.GoString(cpw.pw_dir),
-		Shell: C.GoString(cpw.pw_shell)}
+		Shell: C.GoString(cpw.pw_shell),
+	}
 }
