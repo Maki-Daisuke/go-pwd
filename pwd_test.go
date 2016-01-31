@@ -22,3 +22,20 @@ func TestGetpwnam(t *testing.T) {
 		t.Fatalf(`expected: nil pointer, but actual: %v`, pwd)
 	}
 }
+
+func TestGetpwuid(t *testing.T) {
+	pwd := Getpwuid(0)
+	if pwd == nil {
+		t.Fatal("expected: non-nil pointer, but actual: nil")
+	}
+	if pwd.Name != "root" {
+		t.Fatalf(`expected: "root", but actual: %q`, pwd.Name)
+	}
+	if pwd.UID != 0 {
+		t.Fatalf(`expected: 0, but actual: %d`, pwd.UID)
+	}
+	pwd = Getpwuid(1234556789) // uid which does not exit probably
+	if pwd != nil {
+		t.Fatalf(`expected: nil pointer, but actual: %v`, pwd)
+	}
+}
