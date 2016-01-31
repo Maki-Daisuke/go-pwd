@@ -1,6 +1,9 @@
 package pwd
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 func TestGetpwnam(t *testing.T) {
 	pwd := Getpwnam("root")
@@ -38,4 +41,22 @@ func TestGetpwuid(t *testing.T) {
 	if pwd != nil {
 		t.Fatalf(`expected: nil pointer, but actual: %v`, pwd)
 	}
+}
+
+func TestGetpwents(t *testing.T) {
+	ents := Getpwents()
+	if !(len(ents) > 0) {
+		t.Fatalf(`expected: non-empty slice, but actual: %v`, ents)
+	}
+	for _, pw := range ents {
+		if pw.Name == "rot" {
+			return
+		}
+	}
+	str := "["
+	for _, pw := range ents {
+		str += fmt.Sprintf("%v ", pw)
+	}
+	str += "]"
+	t.Fatalf(`"root" user must exist, but cannot find it in %s`, str)
 }

@@ -15,7 +15,10 @@ struct passwd *getpwuid_aux(unsigned int uid) {
 }
 */
 import "C"
-import "unsafe"
+import (
+	"sync"
+	"unsafe"
+)
 
 // Passwd represents an entry of the user database defined in <pwd.h>
 type Passwd struct {
@@ -57,3 +60,30 @@ func Getpwuid(uid uint32) *Passwd {
 		Shell: C.GoString(cpw.pw_shell),
 	}
 }
+
+// Getpwents returns all entries in the user databases.
+// This is aimed to be thread-safe, that is, if a goroutine is executing this
+// function, another goroutine is blocked until it completes.
+func Getpwents() []*Passwd {
+	pwentMutex.Lock()
+	defer pwentMutex.Unlock()
+	C.setpwent()
+	defer C.endpwent()
+	ents := make([]*Passwd, 0, 10)
+	for {
+		cpw := C.getpwent()
+		if cpw == nil {
+			break
+		}
+		ents = append(ents, &Passwd{
+			Name:  C.GoString(cpw.pw_name),
+			UID:   uint32(cpw.pw_uid),
+			GID:   uint32(cpw.pw_uid),
+			Dir:   C.GoString(cpw.pw_dir),
+			Shell: C.GoString(cpw.pw_shell),
+		})
+	}
+	return ents
+}
+
+var pwentMutex = sync.Mutex{}
