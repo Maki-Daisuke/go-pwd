@@ -49,7 +49,7 @@ func TestGetpwents(t *testing.T) {
 		t.Fatalf(`expected: non-empty slice, but actual: %v`, ents)
 	}
 	for _, pw := range ents {
-		if pw.Name == "rot" {
+		if pw.Name == "root" {
 			return
 		}
 	}
