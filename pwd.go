@@ -1,3 +1,7 @@
+/*
+Package pwd is a thin wrapper of C library <pwd.h>.
+This is designed as thin as possible, but aimed to be thread-safe.
+*/
 package pwd
 
 /*
