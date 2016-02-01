@@ -33,14 +33,7 @@ type Passwd struct {
 	Shell string
 }
 
-// Getpwnam searches the user database for an entry with a matching name.
-func Getpwnam(name string) *Passwd {
-	cname := C.CString(name)
-	defer C.free(unsafe.Pointer(cname))
-	cpw := C.getpwnam(cname)
-	if cpw == nil {
-		return nil
-	}
+func cpasswd2go(cpw *C.struct_passwd) *Passwd {
 	return &Passwd{
 		Name:  C.GoString(cpw.pw_name),
 		UID:   uint32(cpw.pw_uid),
@@ -50,19 +43,24 @@ func Getpwnam(name string) *Passwd {
 	}
 }
 
+// Getpwnam searches the user database for an entry with a matching name.
+func Getpwnam(name string) *Passwd {
+	cname := C.CString(name)
+	defer C.free(unsafe.Pointer(cname))
+	cpw := C.getpwnam(cname)
+	if cpw == nil {
+		return nil
+	}
+	return cpasswd2go(cpw)
+}
+
 // Getpwuid searches the user database for an entry with a matching uid.
 func Getpwuid(uid uint32) *Passwd {
 	cpw := C.getpwuid_aux(C.uint(uid))
 	if cpw == nil {
 		return nil
 	}
-	return &Passwd{
-		Name:  C.GoString(cpw.pw_name),
-		UID:   uint32(cpw.pw_uid),
-		GID:   uint32(cpw.pw_uid),
-		Dir:   C.GoString(cpw.pw_dir),
-		Shell: C.GoString(cpw.pw_shell),
-	}
+	return cpasswd2go(cpw)
 }
 
 // Getpwents returns all entries in the user databases.
@@ -79,13 +77,7 @@ func Getpwents() []*Passwd {
 		if cpw == nil {
 			break
 		}
-		ents = append(ents, &Passwd{
-			Name:  C.GoString(cpw.pw_name),
-			UID:   uint32(cpw.pw_uid),
-			GID:   uint32(cpw.pw_uid),
-			Dir:   C.GoString(cpw.pw_dir),
-			Shell: C.GoString(cpw.pw_shell),
-		})
+		ents = append(ents, cpasswd2go(cpw))
 	}
 	return ents
 }
