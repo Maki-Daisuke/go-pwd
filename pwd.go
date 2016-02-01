@@ -29,6 +29,7 @@ type Passwd struct {
 	Name  string
 	UID   uint32
 	GID   uint32
+	Gecos string
 	Dir   string
 	Shell string
 }
@@ -38,6 +39,7 @@ func cpasswd2go(cpw *C.struct_passwd) *Passwd {
 		Name:  C.GoString(cpw.pw_name),
 		UID:   uint32(cpw.pw_uid),
 		GID:   uint32(cpw.pw_uid),
+		Gecos: C.GoString(cpw.pw_gecos),
 		Dir:   C.GoString(cpw.pw_dir),
 		Shell: C.GoString(cpw.pw_shell),
 	}
