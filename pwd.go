@@ -26,13 +26,13 @@ import (
 
 // Passwd represents an entry of the user database defined in <pwd.h>
 type Passwd struct {
-	Name   string
-	Passwd string
-	UID    uint32
-	GID    uint32
-	Gecos  string
-	Dir    string
-	Shell  string
+	Name   string // user name
+	Passwd string // user password
+	UID    uint32 // user ID
+	GID    uint32 // group ID
+	Gecos  string // real name
+	Dir    string // home directory
+	Shell  string // shell program
 }
 
 func cpasswd2go(cpw *C.struct_passwd) *Passwd {
