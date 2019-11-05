@@ -1,6 +1,8 @@
 go-pwd
 ======
 
+**DEPRECATED: You should use `os/user` package in the standard library**
+
 Description
 -----------
 
